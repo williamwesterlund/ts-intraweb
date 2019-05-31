@@ -1,3 +1,8 @@
-index:
-   path: /
-   controller: App\Controller\StudentController::index
+controllers:
+   resource: '../src/Controller/'
+   type:     annotation
+
+# index:
+#    path: /elevprofiler
+#    controller: App\Controller\StudentController::index
+
