@@ -2,10 +2,9 @@
 
 {% block body %}
 <h1>{{ title }}</h1>
-<p>test</p>
-{# <ul>
-    {% for comment in comments %}
-        <li>{{ comment }}</li>
+<ul>
+    {% for client in clients %}
+        <li>{{ client.studentname|e }}</li>
     {% endfor %}
-</ul> #}
+</ul>
 {% endblock %}

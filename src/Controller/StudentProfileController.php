@@ -3,16 +3,21 @@
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
+use App\Repository\ClientsRepository;
+use JMS\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class StudentProfileController extends AbstractController
 {
     /**
-     * @Route("/", name="studentProfiles")
+     * Lists all clients without assigned teacher.
+     * @Route("/clients/studentprofilessss")
+     *
+     * @return JsonResponse
      */
-    public function list()
-    {
-        return $this->render('studentProfile/list.html.twig', [
-            'title' => 'Student Profiles',
-        ]);
+    public function getClientsStudentProfiles(ClientsRepository $repository, SerializerInterface $serializer)
+    {   
+        $clients = $repository->findAllWithoutTeacher();
+        return new JsonResponse($serializer->serialize($clients, 'json'), 200, [], true);
     }
 }
