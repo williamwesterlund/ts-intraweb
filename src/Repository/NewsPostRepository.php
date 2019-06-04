@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\News;
+use App\Entity\NewsPost;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
- * @method News|null find($id, $lockMode = null, $lockVersion = null)
- * @method News|null findOneBy(array $criteria, array $orderBy = null)
- * @method News[]    findAll()
- * @method News[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method NewsPost|null find($id, $lockMode = null, $lockVersion = null)
+ * @method NewsPost|null findOneBy(array $criteria, array $orderBy = null)
+ * @method NewsPost[]    findAll()
+ * @method NewsPost[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class NewsRepository extends ServiceEntityRepository
+class NewsPostRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, News::class);
+        parent::__construct($registry, NewsPost::class);
     }
 
     // /**
-    //  * @return News[] Returns an array of News objects
+    //  * @return NewsPost[] Returns an array of NewsPost objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class NewsRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?News
+    public function findOneBySomeField($value): ?NewsPost
     {
         return $this->createQueryBuilder('n')
             ->andWhere('n.exampleField = :val')

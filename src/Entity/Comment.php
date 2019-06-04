@@ -6,9 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\CommentsRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
  */
-class Comments
+class Comment
 {
     use TimestampableEntity;
     /**
@@ -27,6 +27,18 @@ class Comments
      * @ORM\Column(type="integer")
      */
     private $likes;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\NewsPost", inversedBy="comments")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $newsPost;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $author;
 
     public function getId(): ?int
     {
@@ -53,6 +65,30 @@ class Comments
     public function setLikes(int $likes): self
     {
         $this->likes = $likes;
+
+        return $this;
+    }
+
+    public function getNewsPost(): ?NewsPost
+    {
+        return $this->newsPost;
+    }
+
+    public function setNewsPost(?NewsPost $newsPost): self
+    {
+        $this->newsPost = $newsPost;
+
+        return $this;
+    }
+
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $author): self
+    {
+        $this->author = $author;
 
         return $this;
     }

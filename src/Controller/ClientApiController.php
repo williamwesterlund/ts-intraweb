@@ -4,7 +4,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
-use App\Repository\ClientsRepository;
+use App\Repository\ClientRepository;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +18,7 @@ class ClientApiController extends AbstractController
      *
      * @return JsonResponse
      */
-    public function getClientsStudentProfiles(ClientsRepository $repository, SerializerInterface $serializer)
+    public function getClientStudentProfiles(ClientRepository $repository, SerializerInterface $serializer)
     {   
         $clients = $repository->findAllWithoutTeacher();
         return new JsonResponse($serializer->serialize($clients, 'json'), 200, [], true);
@@ -30,7 +30,7 @@ class ClientApiController extends AbstractController
      *
      * @return Response
      */
-    public function updateClientTeacher(Request $request, LoggerInterface $logger, ClientsRepository $repository, SerializerInterface $serializer, $id)
+    public function updateClientTeacher(Request $request, LoggerInterface $logger, ClientRepository $repository, SerializerInterface $serializer, $id)
     {   
         if ($content = $request->getContent()) {
             $data = json_decode($content, true);

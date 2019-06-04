@@ -2,12 +2,14 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\ClientsRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\ClientRepository")
  */
-class Clients
+class Client
 {
     /**
      * @ORM\Id()
@@ -60,6 +62,21 @@ class Clients
      * @ORM\Column(type="string", length=255)
      */
     private $time;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="clients")
+     */
+    private $teacher;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\StudentReport", mappedBy="client", orphanRemoval=true)
+     */
+    private $studentReports;
+
+    public function __construct()
+    {
+        $this->studentReports = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -170,6 +187,49 @@ class Clients
     public function setTime(string $time): self
     {
         $this->time = $time;
+
+        return $this;
+    }
+
+    public function getTeacher(): ?User
+    {
+        return $this->teacher;
+    }
+
+    public function setTeacher(?User $teacher): self
+    {
+        $this->teacher = $teacher;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|StudentReport[]
+     */
+    public function getStudentReports(): Collection
+    {
+        return $this->studentReports;
+    }
+
+    public function addStudentReport(StudentReport $studentReport): self
+    {
+        if (!$this->studentReports->contains($studentReport)) {
+            $this->studentReports[] = $studentReport;
+            $studentReport->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStudentReport(StudentReport $studentReport): self
+    {
+        if ($this->studentReports->contains($studentReport)) {
+            $this->studentReports->removeElement($studentReport);
+            // set the owning side to null (unless already changed)
+            if ($studentReport->getClient() === $this) {
+                $studentReport->setClient(null);
+            }
+        }
 
         return $this;
     }
