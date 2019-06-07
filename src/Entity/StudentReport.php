@@ -19,7 +19,7 @@ class StudentReport
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text", nullable=false)
      */
     private $report;
 
