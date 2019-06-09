@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ClientRepository")
@@ -70,6 +71,7 @@ class Client
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\StudentReport", mappedBy="client", orphanRemoval=true)
+     * @MaxDepth(1)
      */
     private $studentReports;
 

@@ -6,7 +6,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
+use App\Entity\Client;
+use App\Repository\StudentReportRepository;
 use JMS\Serializer\SerializerInterface;
+use JMS\Serializer\SerializationContext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,19 +19,37 @@ class ClientApiController extends AbstractController
 {   
     /**
      * Lists all clients without assigned teacher.
-     * @Route("/api/clients/studentprofiles", methods={"GET"})
+     * @Route("/api/clients/studentprofiles", name="get_all_client_student_profiles", methods={"GET"})
      *
      * @return JsonResponse
      */
-    public function getClientStudentProfiles(ClientRepository $repository, SerializerInterface $serializer)
+    public function getAllClientStudentProfiles(ClientRepository $repository, SerializerInterface $serializer)
     {   
         $clients = $repository->findAllWithoutTeacher();
         return new JsonResponse($serializer->serialize($clients, 'json'), 200, [], true);
     }
 
+        /**
+     * Lists all studentReports with for a specific client.
+     * @Route("/api/clients/{id}/studentreports", name="get_client_student_report", methods={"GET"})
+     *
+     * @return JsonResponse
+     */
+    public function getClientStudentReports(
+        StudentReportRepository $studentReportRepo, 
+        SerializerInterface $serializer, 
+        ClientRepository $clientRepo, 
+        $id)
+    {   
+        $client = $clientRepo->findOneBy(["id" => $id]);
+        $studentReports = $studentReportRepo->findBy(["client" => $client]);
+        
+        return new JsonResponse($serializer->serialize($studentReports, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
+    }
+
     /**
      * Update client with new assigned teacher.
-     * @Route("/api/clients/{id}/teacher", methods={"PUT"})
+     * @Route("/api/clients/{id}/teacher", name="update_client_teacher", methods={"PUT"})
      *
      * @return JsonResponse
      */
@@ -66,7 +87,7 @@ class ClientApiController extends AbstractController
 
     /**
      * Creates new client.
-     * @Route("/api/clients", methods={"POST"})
+     * @Route("/api/clients", name="post_client", methods={"POST"})
      *
      * @return JsonResponse
      */
@@ -74,7 +95,8 @@ class ClientApiController extends AbstractController
         Request $request, 
         LoggerInterface $logger, 
         ClientRepository $repository, 
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        EntityManagerInterface $em
         )
     {   
         if ($content = $request->getContent()) {
@@ -92,8 +114,8 @@ class ClientApiController extends AbstractController
             ->setStudyPlan($data["study_plan"])
             ->setTime($data["time"]);
         
-        $manager->persist($client);
-        $manager->flush();
+        $em->persist($client);
+        $em->flush();
 
         // exit(\Doctrine\Common\Util\Debug::dump($data));
 
