@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use JMS\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\NewsPostRepository")
@@ -21,28 +22,30 @@ class NewsPost
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=false)
      */
     private $title;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text", nullable=false)
      */
     private $message;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $likes;
+    private $likes = 0;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="newsPosts")
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
     private $author;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="newsPost", orphanRemoval=true)
+     * @MaxDepth(2)
      */
     private $comments;
 

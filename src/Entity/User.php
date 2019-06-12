@@ -46,23 +46,25 @@ class User
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Client", mappedBy="teacher")
-     * @MaxDepth(1);
+     * @MaxDepth(1)
      */
     private $clients;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\StudentReport", mappedBy="teacher", orphanRemoval=true)
-     * @MaxDepth(1);
+     * @MaxDepth(1)
      */
     private $studentReports;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\NewsPost", mappedBy="author")
+     * @MaxDepth(1)
      */
     private $newsPosts;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author", orphanRemoval=true)
+     * @MaxDepth(1)
      */
     private $comments;
 

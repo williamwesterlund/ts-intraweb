@@ -66,6 +66,7 @@ class Client
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="clients")
+     * @MaxDepth(1)
      */
     private $teacher;
 

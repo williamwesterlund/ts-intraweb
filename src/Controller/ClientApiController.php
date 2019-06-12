@@ -18,7 +18,7 @@ use Psr\Log\LoggerInterface;
 class ClientApiController extends AbstractController
 {   
     /**
-     * Lists all clients without assigned teacher.
+     * Returns all clients without assigned teacher.
      * @Route("/api/clients/studentprofiles", name="get_all_client_student_profiles", methods={"GET"})
      *
      * @return JsonResponse
@@ -29,7 +29,7 @@ class ClientApiController extends AbstractController
         return new JsonResponse($serializer->serialize($clients, 'json'), 200, [], true);
     }
 
-        /**
+    /**
      * Lists all studentReports with for a specific client.
      * @Route("/api/clients/{id}/studentreports", name="get_client_student_report", methods={"GET"})
      *
@@ -50,7 +50,9 @@ class ClientApiController extends AbstractController
     /**
      * Update client with new assigned teacher.
      * @Route("/api/clients/{id}/teacher", name="update_client_teacher", methods={"PUT"})
-     *
+     * Request body : {
+     *  teacher_id : [alphanumeric]
+     * }
      * @return JsonResponse
      */
     public function updateClientTeacher(
@@ -88,7 +90,17 @@ class ClientApiController extends AbstractController
     /**
      * Creates new client.
      * @Route("/api/clients", name="post_client", methods={"POST"})
-     *
+     * Request body : {
+     *  parent_name : [string]
+     *  student_name : [string]
+     *  telephone : [string]
+     *  email : [string]
+     *  address : [string]
+     *  level : [string]
+     *  subjects : [string]
+     *  study_plan : [string]
+     *  time : [string]
+     * }
      * @return JsonResponse
      */
     public function postClient(

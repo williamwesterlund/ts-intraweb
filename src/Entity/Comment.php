@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use JMS\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
@@ -19,24 +20,26 @@ class Comment
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=false)
      */
     private $message;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $likes;
+    private $likes = 0;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\NewsPost", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
     private $newsPost;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
     private $author;
 

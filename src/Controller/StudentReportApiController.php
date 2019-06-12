@@ -18,8 +18,12 @@ class StudentReportApiController extends AbstractController
 {   
     /**
      * Creates a new student report
-     * @Route("/api/studentreports", name="post_studentreports", methods={"POST"})
-     *
+     * @Route("/api/studentreports", name="post_studentreport", methods={"POST"})
+     * Request body : {
+     *  teacher_id : [alphanumeric]
+     *  client_id : [alphanumeric]
+     *  report : [string]
+     * }
      * @return JsonResponse
      */
     public function postStudentReport(

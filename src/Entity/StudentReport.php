@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use JMS\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\StudentReportRepository")
@@ -26,12 +27,14 @@ class StudentReport
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="studentReports")
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
     private $teacher;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Client", inversedBy="studentReports")
      * @ORM\JoinColumn(nullable=false)
+     * @MaxDepth(1)
      */
     private $client;
 
