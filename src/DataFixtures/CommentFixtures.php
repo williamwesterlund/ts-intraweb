@@ -12,10 +12,12 @@ class CommentFixtures extends BaseFixture implements DependentFixtureInterface
 {
     protected function loadData(ObjectManager $manager)
     {
-        $this->createMany(Comment::class, 10, function(Comment $comment, $count) {
+        $this->createMany(10, 'main_comments', function() {
+            $comment = new Comment();
             $comment->setMessage($this->faker->paragraph)
-                ->setNewsPost($this->getRandomReference(NewsPost::class))
-                ->setAuthor($this->getRandomReference(User::class));
+                ->setNewsPost($this->getRandomReference('main_newsposts'))
+                ->setAuthor($this->getRandomReference('main_users'));
+            return $comment;
         });
         $manager->flush();
     }

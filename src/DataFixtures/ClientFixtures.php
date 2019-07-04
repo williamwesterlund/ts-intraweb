@@ -9,7 +9,8 @@ class ClientFixtures extends BaseFixture
 {
     protected function loadData(ObjectManager $manager)
     {
-        $this->createMany(Client::class, 10, function(Client $client, $count) {
+        $this->createMany(10, 'main_clients', function() {
+            $client = new Client();
             $client->setParentName($this->faker->name)
                 ->setStudentName($this->faker->name)
                 ->setTelephone($this->faker->phoneNumber)
@@ -19,6 +20,7 @@ class ClientFixtures extends BaseFixture
                 ->setSubjects($this->faker->randomElement($array = array("Matte", "Svenska", "Spanska & Engelska")))
                 ->setStudyPlan($this->faker->randomElement($array = array("2 tillfällen/vecka", "Vid behov, tillsvidare", "1 tillfälle/vecka")))
                 ->setTime($this->faker->randomElement($array = array("Onsdagar 17:00", "Torsdagar, Fredagar efter 16:00", "Bestämmer med lärare")));     
+            return $client;
         });
         $manager->flush();
     }

@@ -12,10 +12,12 @@ class StudentReportFixtures extends BaseFixture implements DependentFixtureInter
 {
     protected function loadData(ObjectManager $manager)
     {
-        $this->createMany(StudentReport::class, 10, function(StudentReport $studentReport, $count) {
+        $this->createMany(10, 'main_studentreports', function() {
+            $studentReport = new StudentReport();
             $studentReport->setReport($this->faker->paragraph)
-                ->setTeacher($this->getRandomReference(User::class))
-                ->setClient($this->getRandomReference(Client::class));
+                ->setTeacher($this->getRandomReference('main_users'))
+                ->setClient($this->getRandomReference('main_clients'));
+            return $studentReport;
         });
         $manager->flush();
     }

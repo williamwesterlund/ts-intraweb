@@ -11,10 +11,12 @@ class NewsPostFixtures extends BaseFixture implements DependentFixtureInterface
 {
     protected function loadData(ObjectManager $manager)
     {
-        $this->createMany(NewsPost::class, 10, function(NewsPost $newsPost, $count) {
+        $this->createMany(10, 'main_newsposts', function() {
+            $newsPost = new NewsPost();
             $newsPost->setTitle($this->faker->sentence($nbWords = 6, $variableNbWords = true))
                 ->setMessage($this->faker->paragraph)
-                ->setAuthor($this->getRandomReference(User::class));
+                ->setAuthor($this->getRandomReference('main_users'));
+            return $newsPost;
         });
         $manager->flush();
     }
