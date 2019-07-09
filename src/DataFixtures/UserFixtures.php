@@ -10,10 +10,10 @@ class UserFixtures extends BaseFixture
 {
     private $passwordEncoder;
 
-//    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
-//    {
-//        $this->passwordEncoder = $passwordEncoder;
-//    }
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    {
+        $this->passwordEncoder = $passwordEncoder;
+    }
 
     protected function loadData(ObjectManager $manager)
     {
@@ -22,15 +22,28 @@ class UserFixtures extends BaseFixture
             $user->setName($this->faker->name)
                 ->setEmail($this->faker->freeEmail);
 
-            $user->setPassword($this->faker->password);
-
-//            $user->setPassword($this->passwordEncoder->encodePassword(
-//                $user,
-//                'engage'
-//            ));
+            $user->setPassword($this->passwordEncoder->encodePassword(
+                $user,
+                'engage'
+            ));
 
             return $user;
             });
+
+        $this->createMany(3, 'admin_users', function() {
+            $user = new User();
+            $user->setName($this->faker->name)
+                ->setEmail($this->faker->freeEmail)
+                ->setRoles(['ROLE_ADMIN']);
+
+            $user->setPassword($this->passwordEncoder->encodePassword(
+                $user,
+                'engage'
+            ));
+
+            return $user;
+        });
+
         $manager->flush();
     }
 }

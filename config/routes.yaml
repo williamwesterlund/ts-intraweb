@@ -2,6 +2,9 @@ controllers:
    resource: '../src/Controller/'
    type:     annotation
 
+api_login_check:
+   path: /api/login_check
+
 # index:
 #    path: /elevprofiler
 #    controller: App\Controller\StudentController::index
