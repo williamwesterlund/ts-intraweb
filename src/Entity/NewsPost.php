@@ -32,11 +32,6 @@ class NewsPost
     private $message;
 
     /**
-     * @ORM\Column(type="integer")
-     */
-    private $likes = 0;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="newsPosts")
      * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
@@ -49,9 +44,15 @@ class NewsPost
      */
     private $comments;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Likes", mappedBy="newsPost", orphanRemoval=true)
+     */
+    private $likes;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->likes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -79,18 +80,6 @@ class NewsPost
     public function setMessage(string $message): self
     {
         $this->message = $message;
-
-        return $this;
-    }
-
-    public function getLikes(): ?int
-    {
-        return $this->likes;
-    }
-
-    public function setLikes(int $likes): self
-    {
-        $this->likes = $likes;
 
         return $this;
     }
@@ -132,6 +121,37 @@ class NewsPost
             // set the owning side to null (unless already changed)
             if ($comment->getNewsPost() === $this) {
                 $comment->setNewsPost(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Likes[]
+     */
+    public function getLikes(): Collection
+    {
+        return $this->likes;
+    }
+
+    public function addLikes(Likes $likes): self
+    {
+        if (!$this->likes->contains($likes)) {
+            $this->likes[] = $likes;
+            $likes->setNewsPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLikes(Likes $likes): self
+    {
+        if ($this->likes->contains($likes)) {
+            $this->likes->removeElement($likes);
+            // set the owning side to null (unless already changed)
+            if ($likes->getNewsPost() === $this) {
+                $likes->setNewsPost(null);
             }
         }
 

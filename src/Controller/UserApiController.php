@@ -34,9 +34,7 @@ class UserApiController extends AbstractController
         $user = new User();
         $user->setName($data["name"])
             ->setPassword("temp_password")
-            ->setEmail($data["email"])
-            ->setIsTeacher(true)
-            ->setIsAdmin(false);
+            ->setEmail($data["email"]);
         
         $em->persist($user);
         $em->flush();

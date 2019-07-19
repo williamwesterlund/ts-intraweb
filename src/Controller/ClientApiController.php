@@ -3,7 +3,6 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Response;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use App\Entity\Client;
@@ -26,7 +25,7 @@ class ClientApiController extends AbstractController
     public function getAllClientStudentProfiles(ClientRepository $repository, SerializerInterface $serializer)
     {   
         $clients = $repository->findAllWithoutTeacher();
-        return new JsonResponse($serializer->serialize($clients, 'json'), 200, [], true);
+        return new JsonResponse($serializer->serialize($clients, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
     }
 
     /**

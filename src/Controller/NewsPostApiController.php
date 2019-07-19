@@ -1,6 +1,9 @@
 <?php
 namespace App\Controller;
 
+use App\Entity\Likes;
+use App\Repository\LikesRepository;
+use App\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use JMS\Serializer\SerializerInterface;
@@ -28,7 +31,7 @@ class NewsPostApiController extends AbstractController
         SerializerInterface $serializer
         )
     {   
-        $newsPosts = $repository->findAll();
+        $newsPosts = $repository->findAllIncludeLikes();
         return new JsonResponse($serializer->serialize($newsPosts, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
     }
 
@@ -103,23 +106,23 @@ class NewsPostApiController extends AbstractController
     }
 
     /**
-     * Creates a new comment for newspost with {id}
-     * @Route("/api/newsposts/{id}/comments", name="post_newspost_comment", methods={"POST"})
-     * Request body : {
-     *  user_id : [alphanumeric]
-     *  newspost_id : [alphanumeric]
-     *  message : [string]
-     * }
-     * @return JsonResponse
-     */
+ * Creates a new comment for newspost with {id}
+ * @Route("/api/newsposts/{id}/comments", name="post_newspost_comment", methods={"POST"})
+ * Request body : {
+ *  user_id : [alphanumeric]
+ *  newspost_id : [alphanumeric]
+ *  message : [string]
+ * }
+ * @return JsonResponse
+ */
     public function postNewsPostComment(
-        Request $request, 
-        SerializerInterface $serializer, 
+        Request $request,
+        SerializerInterface $serializer,
         EntityManagerInterface $em,
         UserRepository $userRepo,
         NewsPostRepository $newsPostRepo
-        )
-    {   
+    )
+    {
         if ($content = $request->getContent()) {
             $data = json_decode($content, true);
         }
@@ -131,13 +134,53 @@ class NewsPostApiController extends AbstractController
         $comment->setMessage($data["message"])
             ->setNewsPost($newsPost)
             ->setAuthor($author);
-        
+
         $em->persist($comment);
         $em->flush();
 
         return new JsonResponse(
-            ['status' => 'ok'], 
+            ['status' => 'ok'],
             JsonResponse::HTTP_CREATED
+        );
+    }
+
+    /**
+     * Creates a new like for newspost with {id} if the user haven't already liked
+     * @Route("/api/newsposts/{id}/like", name="post_newspost_like", methods={"POST"})
+     * Request body : {
+     *  user_id : [alphanumeric]
+     * }
+     * @return JsonResponse
+     */
+    public function postNewsPostLike(
+        EntityManagerInterface $em,
+        UserRepository $userRepo,
+        NewsPostRepository $newsPostRepo,
+        LikesRepository $likesRepo,
+        UserService $userService,
+        LoggerInterface $logger,
+        $id
+    )
+    {
+        $user_id = $userService->getCurrentUser()->getId();
+        $author = $userRepo->findOneBy(["id" => $user_id]);
+        $newsPost = $newsPostRepo->findOneBy(["id" => $id]);
+        $like = $likesRepo->findOneBy(["newsPost" => $newsPost, "author" => $author]);
+
+
+        if($like) {
+            $em->remove($like);
+        } else {
+            $like = new Likes();
+            $like->setAuthor($author)
+                ->setNewsPost($newsPost);
+            $em->persist($like);
+        }
+        $em->flush();
+
+        return new JsonResponse(
+            ['status' => 200],
+            JsonResponse::HTTP_OK
         );
     }
 

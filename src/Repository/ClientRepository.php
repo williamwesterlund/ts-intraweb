@@ -25,10 +25,9 @@ class ClientRepository extends ServiceEntityRepository
     public function findAllWithoutTeacher()
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.teacher_id IS NULL')
+            ->andWhere('c.teacher IS NULL')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 
     /*

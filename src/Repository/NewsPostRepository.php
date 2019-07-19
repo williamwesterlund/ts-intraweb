@@ -19,6 +19,16 @@ class NewsPostRepository extends ServiceEntityRepository
         parent::__construct($registry, NewsPost::class);
     }
 
+    public function findAllIncludeLikes() {
+        return $this->createQueryBuilder('np')
+            ->addSelect('np.title, np.message, np.id, np.createdAt')
+            ->leftJoin('np.likes', 'likes')
+            ->addSelect('COUNT(likes.newsPost) AS likesCount')
+            ->groupBy('np.id')
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return NewsPost[] Returns an array of NewsPost objects
     //  */
