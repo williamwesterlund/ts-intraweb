@@ -18,11 +18,9 @@ class CookieController extends AbstractController {
     {
         $response = Response::create();
         $response->headers->clearCookie('Bearer');
-        $response->send();
-        return new JsonResponse(
-            ['status' => 200],
-            JsonResponse::HTTP_OK
-        );
+        $response->setStatusCode(Response::HTTP_OK);
+
+        return $response;
     }
 
 

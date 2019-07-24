@@ -76,9 +76,15 @@ class Client
      */
     private $studentReports;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="hidden_clients")
+     */
+    private $hidden_users;
+
     public function __construct()
     {
         $this->studentReports = new ArrayCollection();
+        $this->hidden_users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -232,6 +238,34 @@ class Client
             if ($studentReport->getClient() === $this) {
                 $studentReport->setClient(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getHiddenUsers(): Collection
+    {
+        return $this->hidden_users;
+    }
+
+    public function addHiddenUser(User $hiddenUser): self
+    {
+        if (!$this->hidden_users->contains($hiddenUser)) {
+            $this->hidden_users[] = $hiddenUser;
+            $hiddenUser->addHiddenClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHiddenUser(User $hiddenUser): self
+    {
+        if ($this->hidden_users->contains($hiddenUser)) {
+            $this->hidden_users->removeElement($hiddenUser);
+            $hiddenUser->removeHiddenClient($this);
         }
 
         return $this;

@@ -70,6 +70,11 @@ class User implements UserInterface
      */
     private $likes;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Client", inversedBy="hidden_users")
+     */
+    private $hidden_clients;
+
     public function __construct()
     {
         $this->clients = new ArrayCollection();
@@ -77,6 +82,7 @@ class User implements UserInterface
         $this->newsPosts = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->likes = new ArrayCollection();
+        $this->hidden_clients = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -314,6 +320,32 @@ class User implements UserInterface
             if ($like->getAuthor() === $this) {
                 $like->setAuthor(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Client[]
+     */
+    public function getHiddenClients(): Collection
+    {
+        return $this->hidden_clients;
+    }
+
+    public function addHiddenClient(Client $hiddenClient): self
+    {
+        if (!$this->hidden_clients->contains($hiddenClient)) {
+            $this->hidden_clients[] = $hiddenClient;
+        }
+
+        return $this;
+    }
+
+    public function removeHiddenClient(Client $hiddenClient): self
+    {
+        if ($this->hidden_clients->contains($hiddenClient)) {
+            $this->hidden_clients->removeElement($hiddenClient);
         }
 
         return $this;

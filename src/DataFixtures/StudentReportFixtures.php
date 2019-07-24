@@ -14,7 +14,12 @@ class StudentReportFixtures extends BaseFixture implements DependentFixtureInter
     {
         $this->createMany(10, 'main_studentreports', function() {
             $studentReport = new StudentReport();
-            $studentReport->setReport($this->faker->paragraph)
+            $studentReport->setQ1Subjects('Math')
+                ->setQ2Performance($this->faker->numberBetween($min = 1, $max = 5))
+                ->setQ3Motivation($this->faker->numberBetween($min = 1, $max = 5))
+                ->setQ4Trajectory($this->faker->paragraph)
+                ->setDate($this->faker->dateTime)
+                ->setDateUntil($this->faker->dateTime)
                 ->setTeacher($this->getRandomReference('main_users'))
                 ->setClient($this->getRandomReference('main_clients'));
             return $studentReport;

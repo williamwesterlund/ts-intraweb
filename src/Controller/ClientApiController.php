@@ -1,7 +1,10 @@
 <?php
 namespace App\Controller;
 
+use App\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Mercure\Publisher;
+use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
@@ -22,14 +25,35 @@ class ClientApiController extends AbstractController
      *
      * @return JsonResponse
      */
-    public function getAllClientStudentProfiles(ClientRepository $repository, SerializerInterface $serializer)
-    {   
+    public function getAllClientStudentProfiles(
+        ClientRepository $repository,
+        SerializerInterface $serializer,
+        UserService $userService,
+        UserRepository $userRepo,
+        LoggerInterface $logger
+    )
+    {
+        $user_id = $userService->getCurrentUser()->getId();
+        $user = $userRepo->findOneBy(["id" => $user_id]);
+        $userHiddenClients = $user->getHiddenClients()->toArray();
+
         $clients = $repository->findAllWithoutTeacher();
-        return new JsonResponse($serializer->serialize($clients, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
+
+//        dump($clients);
+
+        $filteredClients = array_udiff($clients, $userHiddenClients,
+            function ($obj_a, $obj_b) {
+                return $obj_a->getId() - $obj_b->getId();
+            }
+        );
+
+        dump($filteredClients);
+
+        return new JsonResponse($serializer->serialize($filteredClients, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
     }
 
     /**
-     * Lists all studentReports with for a specific client.
+     * Lists all studentReports for a specific client.
      * @Route("/api/clients/{id}/studentreports", name="get_client_student_report", methods={"GET"})
      *
      * @return JsonResponse
@@ -37,52 +61,51 @@ class ClientApiController extends AbstractController
     public function getClientStudentReports(
         StudentReportRepository $studentReportRepo, 
         SerializerInterface $serializer, 
-        ClientRepository $clientRepo, 
+        ClientRepository $clientRepo,
         $id)
     {   
         $client = $clientRepo->findOneBy(["id" => $id]);
         $studentReports = $studentReportRepo->findBy(["client" => $client]);
-        
+
         return new JsonResponse($serializer->serialize($studentReports, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
     }
 
     /**
      * Update client with new assigned teacher.
      * @Route("/api/clients/{id}/teacher", name="update_client_teacher", methods={"PUT"})
-     * Request body : {
-     *  teacher_id : [alphanumeric]
-     * }
      * @return JsonResponse
      */
     public function updateClientTeacher(
-        Request $request, 
-        LoggerInterface $logger, 
+        Request $request,
         ClientRepository $clientRepo,
-        UserRepository $userRepo,  
-        SerializerInterface $serializer, 
+        UserRepository $userRepo,
         EntityManagerInterface $em,
+        Publisher $publisher,
+        UserService $userService,
         $id
         )
-    {   
-        if ($content = $request->getContent()) {
-            $data = json_decode($content, true);
-        }
-
-        // $logger->info($id);
-        // $logger->info($data["teacher_id"]);
-        // exit(\Doctrine\Common\Util\Debug::dump($data));
+    {
+        $user_id = $userService->getCurrentUser()->getId();
 
         $client = $clientRepo->findOneBy(["id" => $id]);
-        $teacher = $userRepo->findOneBy(["id" => $data["teacher_id"]]);
+        $teacher = $userRepo->findOneBy(["id" => $user_id]);
 
         $client->setTeacher($teacher);
 
         $em->persist($client);
         $em->flush();
 
+        $update = new Update(
+            'studentprofile',
+            json_encode(['status' => 'Update'])
+        );
+
+        // The Publisher service is an invokable object
+        $publisher($update);
+
         return new JsonResponse(
-            ['status' => 'ok'], 
-            JsonResponse::HTTP_CREATED
+            ['status' => 200],
+            JsonResponse::HTTP_OK
         );
     }
 
@@ -103,10 +126,7 @@ class ClientApiController extends AbstractController
      * @return JsonResponse
      */
     public function postClient(
-        Request $request, 
-        LoggerInterface $logger, 
-        ClientRepository $repository, 
-        SerializerInterface $serializer,
+        Request $request,
         EntityManagerInterface $em
         )
     {   

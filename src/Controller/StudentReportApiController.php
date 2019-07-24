@@ -1,6 +1,8 @@
 <?php
 namespace App\Controller;
 
+use App\Services\UserService;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,42 +20,53 @@ class StudentReportApiController extends AbstractController
 {   
     /**
      * Creates a new student report
-     * @Route("/api/studentreports", name="post_studentreport", methods={"POST"})
+     * @Route("/api/studentreport", name="post_studentreport", methods={"POST"})
      * Request body : {
-     *  teacher_id : [alphanumeric]
-     *  client_id : [alphanumeric]
-     *  report : [string]
+     *  date : [date]
+     *  dateUntil : [date]
+     *  student : [string]
+     *  subjects : [string]
+     *  performance : [alphanumeric]
+     *  motivation : [alphanumeric]
+     *  trajectory : [string]
      * }
      * @return JsonResponse
      */
     public function postStudentReport(
-        Request $request, 
-        SerializerInterface $serializer, 
+        Request $request,
         ClientRepository $clientRepo,
         UserRepository $userRepo,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        UserService $userService
         )
     {   
         if ($content = $request->getContent()) {
             $data = json_decode($content, true);
         }
 
-        $teacher = $userRepo->findOneBy(["id" => $data["teacher_id"]]);
-        $client = $clientRepo->findOneBy(["id" => $data["client_id"]]);
+        $user_id = $userService->getCurrentUser()->getId();
+        $teacher = $userRepo->findOneBy(["id" => $user_id]);
+        $client = $clientRepo->findOneBy(["student_name" => $data["student"]]);
+
+        $date = DateTime::createFromFormat('Y-m-d h:i:s', date('Y-m-d h:i:s', strtotime($data["date"])));
+        $dateUntil = DateTime::createFromFormat('Y-m-d h:i:s', date('Y-m-d h:i:s', strtotime($data["dateUntil"])));
 
         $studentReport = new StudentReport();
-        $studentReport->setReport($data["report"])
+        $studentReport->setQ1Subjects($data["subjects"])
+            ->setQ2Performance($data["performance"])
+            ->setQ3Motivation($data["motivation"])
+            ->setQ4Trajectory($data["trajectory"])
+            ->setDate($date)
+            ->setDateUntil($dateUntil)
             ->setTeacher($teacher)
             ->setClient($client);
         
         $em->persist($studentReport);
         $em->flush();
 
-        // exit(\Doctrine\Common\Util\Debug::dump($data));
-
         return new JsonResponse(
-            ['status' => 'ok'], 
-            JsonResponse::HTTP_CREATED
+            ['status' => 200],
+            JsonResponse::HTTP_OK
         );
     }
 }
