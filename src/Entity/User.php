@@ -7,9 +7,13 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use JMS\Serializer\Annotation\MaxDepth;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Exclude;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ExclusionPolicy("none")
  */
 class User implements UserInterface
 {
@@ -38,6 +42,7 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Exclude
      */
     private $password;
 
@@ -74,6 +79,16 @@ class User implements UserInterface
      * @ORM\ManyToMany(targetEntity="App\Entity\Client", inversedBy="hidden_users")
      */
     private $hidden_clients;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $address;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $capacity;
 
     public function __construct()
     {
@@ -347,6 +362,30 @@ class User implements UserInterface
         if ($this->hidden_clients->contains($hiddenClient)) {
             $this->hidden_clients->removeElement($hiddenClient);
         }
+
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?string $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getCapacity(): ?string
+    {
+        return $this->capacity;
+    }
+
+    public function setCapacity(?string $capacity): self
+    {
+        $this->capacity = $capacity;
 
         return $this;
     }

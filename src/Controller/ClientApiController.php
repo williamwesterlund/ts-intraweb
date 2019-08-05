@@ -18,7 +18,177 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
 class ClientApiController extends AbstractController
-{   
+{
+    /**
+     * CRUD
+     */
+
+    /**
+     * GET: Returns all clients
+     * @Route("/api/clients", name="get_all_client", methods={"GET"})
+     * @return JsonResponse
+     */
+    public function getAllClients(
+        ClientRepository $repository,
+        SerializerInterface $serializer
+    )
+    {
+        $clients = $repository->findAll();
+        return new JsonResponse($serializer->serialize($clients, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
+    }
+
+    /**
+     * POST: Creates new client.
+     * @Route("/api/clients", name="post_client", methods={"POST"})
+     * Request body : {
+     *  parent_name : [string]
+     *  student_name : [string]
+     *  telephone : [string]
+     *  email : [string]
+     *  address : [string]
+     *  level : [string]
+     *  subjects : [string]
+     *  study_plan : [string]
+     *  time : [string]
+     *  teacher : [string]
+     *  hidden_users : [string]
+     * }
+     * @return JsonResponse
+     */
+    public function postClient(
+        Request $request,
+        EntityManagerInterface $em,
+        SerializerInterface $serializer,
+        UserRepository $userRepo
+    )
+    {
+        if ($content = $request->getContent()) {
+            $data = json_decode($content, true);
+        }
+
+        $client = new Client();
+        $client->setParentName($data["parent_name"])
+            ->setStudentName($data["student_name"])
+            ->setTelephone($data["telephone"])
+            ->setEmail($data["email"])
+            ->setAddress($data["address"])
+            ->setLevel($data["level"])
+            ->setSubjects($data["subjects"])
+            ->setStudyPlan($data["study_plan"])
+            ->setTime($data["time"]);
+
+        if($data["teacher"] == "") {
+            $client->setTeacher(null);
+        } else {
+            $teacher = $userRepo->findOneBy(["name" => $data["teacher"]]);
+            $client->setTeacher($teacher);
+        }
+
+        if($data["hidden_users"] != "") {
+            $hiddenUsersArray = explode(", ", $data["hidden_users"]);
+            foreach ($hiddenUsersArray as $hiddenUser) {
+                $user = $userRepo->findOneBy(["name" => $hiddenUser]);
+                $client->addHiddenUser($user);
+            }
+        }
+
+        $em->persist($client);
+        $em->flush();
+
+        return new JsonResponse($serializer->serialize($client, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
+    }
+
+    /**
+     * PUT: Update Client Data
+     * @Route("/api/clients/{id}", name="update_client", methods={"PUT"})
+     * Request body : {
+     *  parent_name : [string]
+     *  student_name : [string]
+     *  telephone : [string]
+     *  email : [string]
+     *  address : [string]
+     *  level : [string]
+     *  subjects : [string]
+     *  study_plan : [string]
+     *  time : [string]
+     *  teacher : [string]
+     *  hidden_users : [string]
+     * }
+     * @return JsonResponse
+     */
+    public function updateClient(
+        Request $request,
+        SerializerInterface $serializer,
+        ClientRepository $clientRepo,
+        UserRepository $userRepo,
+        EntityManagerInterface $em,
+        $id
+    )
+    {
+        if ($content = $request->getContent()) {
+            $data = json_decode($content, true);
+        }
+
+        $client = $clientRepo->findOneBy(["id" => $id]);
+
+        $client->setParentName($data["parent_name"])
+            ->setStudentName($data["student_name"])
+            ->setTelephone($data["telephone"])
+            ->setEmail($data["email"])
+            ->setAddress($data["address"])
+            ->setLevel($data["level"])
+            ->setSubjects($data["subjects"])
+            ->setStudyPlan($data["study_plan"])
+            ->setTime($data["time"]);
+
+        if($data["teacher"] == "") {
+            $client->setTeacher(null);
+        } else {
+            $teacher = $userRepo->findOneBy(["name" => $data["teacher"]]);
+            $client->setTeacher($teacher);
+        }
+
+        if($data["hidden_users"] != "") {
+            $hiddenUsersArray = explode(", ", $data["hidden_users"]);
+            foreach ($hiddenUsersArray as $hiddenUser) {
+                $user = $userRepo->findOneBy(["name" => $hiddenUser]);
+                $client->addHiddenUser($user);
+            }
+        }
+
+        $em->persist($client);
+        $em->flush();
+
+        return new JsonResponse($serializer->serialize($client, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
+    }
+
+    /**
+     * DELETE: delete client with {id}
+     * @Route("/api/clients/{id}", name="delete_client", methods={"DELETE"})
+     *
+     * @return JsonResponse
+     */
+    public function deleteClient(
+        ClientRepository $repository,
+        EntityManagerInterface $em,
+        $id
+    )
+    {
+        $client = $repository->findOneBy(["id" => $id]);
+
+        $em->remove($client);
+        $em->flush();
+
+        return new JsonResponse(
+            ['status' => 'ok'],
+            JsonResponse::HTTP_OK
+        );
+    }
+
+    /**
+     * END CRUD
+     */
+
     /**
      * Returns all clients without assigned teacher.
      * @Route("/api/clients/studentprofiles", name="get_all_client_student_profiles", methods={"GET"})
@@ -106,53 +276,6 @@ class ClientApiController extends AbstractController
         return new JsonResponse(
             ['status' => 200],
             JsonResponse::HTTP_OK
-        );
-    }
-
-    /**
-     * Creates new client.
-     * @Route("/api/clients", name="post_client", methods={"POST"})
-     * Request body : {
-     *  parent_name : [string]
-     *  student_name : [string]
-     *  telephone : [string]
-     *  email : [string]
-     *  address : [string]
-     *  level : [string]
-     *  subjects : [string]
-     *  study_plan : [string]
-     *  time : [string]
-     * }
-     * @return JsonResponse
-     */
-    public function postClient(
-        Request $request,
-        EntityManagerInterface $em
-        )
-    {   
-        if ($content = $request->getContent()) {
-            $data = json_decode($content, true);
-        }
-
-        $client = new Client();
-        $client->setParentName($data["parent_name"])
-            ->setStudentName($data["student_name"])
-            ->setTelephone($data["telephone"])
-            ->setEmail($data["email"])
-            ->setAddress($data["address"])
-            ->setLevel($data["level"])
-            ->setSubjects($data["subjects"])
-            ->setStudyPlan($data["study_plan"])
-            ->setTime($data["time"]);
-        
-        $em->persist($client);
-        $em->flush();
-
-        // exit(\Doctrine\Common\Util\Debug::dump($data));
-
-        return new JsonResponse(
-            ['status' => 'ok'], 
-            JsonResponse::HTTP_CREATED
         );
     }
 }

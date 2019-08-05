@@ -18,6 +18,181 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class UserApiController extends AbstractController
 {
     /**
+     * CRUD
+     */
+
+    /**
+     * GET: Returns all users
+     * @Route("/api/user", name="get_all_user", methods={"GET"})
+     * @return JsonResponse
+     */
+    public function getAllUsers(
+        UserRepository $repository,
+        SerializerInterface $serializer
+    )
+    {
+        $users = $repository->findAll();
+        return new JsonResponse($serializer->serialize($users, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
+    }
+
+    /**
+     * POST: Creates new client.
+     * @Route("/api/user", name="post_user", methods={"POST"})
+     * Request body : {
+     *  name : [string]
+     *  email : [string]
+     *  roles : [string]
+     *  clients : [string]
+     *  address : [string]
+     *  capacity : [string]
+     * }
+     * @return JsonResponse
+     */
+    public function postUser(
+        Request $request,
+        EntityManagerInterface $em,
+        SerializerInterface $serializer,
+        ClientRepository $clientRepo,
+        UserPasswordEncoderInterface $passwordEncoder
+    )
+    {
+        if ($content = $request->getContent()) {
+            $data = json_decode($content, true);
+        }
+
+        $user = new User();
+        $user->setEmail($data["email"])
+            ->setName($data["name"])
+            ->setAddress($data["address"])
+            ->setCapacity($data["capacity"]);
+
+        $user->setPassword($passwordEncoder->encodePassword(
+            $user,
+            'topscholar'
+        ));
+
+        if($data["roles"] == "" || $data["roles"] == "ROLE_USER") {
+//            $user->setRoles(["ROLE_USER"]);
+        } else {
+            $rolesArray = explode(", ", $data["roles"]);
+            $user->setRoles($rolesArray);
+        }
+
+        if(!$data["clients"] == "") {
+            $clientArray = explode(", ", $data["clients"]);
+            foreach ($clientArray as $client) {
+                $clientObj = $clientRepo->findOneBy(["student_name" => $client]);
+                $user->addClient($clientObj);
+            }
+        }
+
+        $em->persist($user);
+        $em->flush();
+
+        return new JsonResponse($serializer->serialize($user, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
+    }
+
+    /**
+     * PUT: Creates new client.
+     * @Route("/api/user/{id}", name="update_user", methods={"PUT"})
+     * Request body : {
+     *  name : [string]
+     *  email : [string]
+     *  roles : [string]
+     *  clients : [string]
+     *  address : [string]
+     *  capacity : [string]
+     * }
+     * @return JsonResponse
+     */
+    public function updateUser(
+        Request $request,
+        EntityManagerInterface $em,
+        SerializerInterface $serializer,
+        UserRepository $userRepo,
+        ClientRepository $clientRepo,
+        $id
+    )
+    {
+        if ($content = $request->getContent()) {
+            $data = json_decode($content, true);
+        }
+
+        $user = $userRepo->findOneBy(["id" => $id]);
+
+        $user->setEmail($data["email"])
+            ->setName($data["name"])
+            ->setAddress($data["address"])
+            ->setCapacity($data["capacity"]);
+
+        if($data["roles"] == "" || $data["roles"] == "ROLE_USER") {
+            $user->setRoles(["ROLE_USER"]);
+        } else {
+            $rolesArray = explode(", ", $data["roles"]);
+            $user->setRoles($rolesArray);
+        }
+
+
+        if(!$data["clients"] == "") {
+            $existingClients = [];
+            $userClientsObj = $user->getClients();
+            foreach ($userClientsObj as $userClient) {
+                array_push($existingClients, $userClient->getStudentName());
+            }
+            $clientArray = explode(", ", $data["clients"]);
+            foreach ($clientArray as $client) {
+                if (!in_array($client, $existingClients)) {
+                    $clientObj = $clientRepo->findOneBy(["student_name" => $client]);
+                    $user->addClient($clientObj);
+                }
+            }
+            foreach ($existingClients as $existingClient) {
+                if (!in_array($existingClient, $clientArray)) {
+                    $clientObj = $clientRepo->findOneBy(["student_name" => $existingClient]);
+                    $user->removeClient($clientObj);
+                }
+            }
+        } else {
+            $userClientsObj = $user->getClients();
+            foreach ($userClientsObj as $client) {
+                $user->removeClient($client);
+            }
+        }
+
+        $em->persist($user);
+        $em->flush();
+
+        return new JsonResponse($serializer->serialize($user, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
+    }
+
+    /**
+     * DELETE: delete user with {id}
+     * @Route("/api/user/{id}", name="delete_user", methods={"DELETE"})
+     *
+     * @return JsonResponse
+     */
+    public function deleteUser(
+        UserRepository $repository,
+        EntityManagerInterface $em,
+        $id
+    )
+    {
+        $user = $repository->findOneBy(["id" => $id]);
+
+        $em->remove($user);
+        $em->flush();
+
+        return new JsonResponse(
+            ['status' => 'ok'],
+            JsonResponse::HTTP_OK
+        );
+    }
+
+    /**
+     * END CRUD
+     */
+
+    /**
      * Get a user
      * @Route("/api/user", name="get_user", methods={"GET"})
      * @return JsonResponse
@@ -31,9 +206,21 @@ class UserApiController extends AbstractController
         $user_id = $userService->getCurrentUser()->getId();
         $user = $userRepo->findOneBy(["id" => $user_id]);
 
+        $address = '';
+        if($user->getAddress() != null) {
+            $address = $user->getAddress();
+        }
+
+        $capacity = '';
+        if($user->getCapacity() != null) {
+            $capacity = $user->getCapacity();
+        }
+
         $userObj = (object) [
             'name' => $user->getName(),
-            'email' => $user->getUsername()
+            'email' => $user->getUsername(),
+            'address' => $address,
+            'capacity' => $capacity
         ];
 
         return new JsonResponse(json_encode($userObj), 200, [], true);
@@ -55,39 +242,6 @@ class UserApiController extends AbstractController
         $clients = $teacher->getClients();
 
         return new JsonResponse($serializer->serialize($clients, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
-    }
-    /**
-     * Creates a new teacher user
-     * @Route("/api/users/teacher", name="post_user_teacher", methods={"POST"})
-     * Request body : {
-     *  name : [string]
-     *  email : [string]
-     * }
-     * @return JsonResponse
-     */
-    public function postUserTeacher(
-        Request $request,
-        EntityManagerInterface $em
-        )
-    {   
-        if ($content = $request->getContent()) {
-            $data = json_decode($content, true);
-        }
-
-        $user = new User();
-        $user->setName($data["name"])
-            ->setPassword("temp_password")
-            ->setEmail($data["email"]);
-        
-        $em->persist($user);
-        $em->flush();
-
-        // exit(\Doctrine\Common\Util\Debug::dump($data));
-
-        return new JsonResponse(
-            ['status' => 'ok'], 
-            JsonResponse::HTTP_CREATED
-        );
     }
 
     /**
@@ -202,5 +356,41 @@ class UserApiController extends AbstractController
                 JsonResponse::HTTP_BAD_REQUEST
             );
         }
+    }
+
+    /**
+     * Change user info
+     * @Route("/api/users/info", name="post_user_changeinfo", methods={"POST"})
+     * Request body : {
+     *  email : [string]
+     *  address : [string]
+     *  capacity : [string]
+     * }
+     *
+     * @return JsonResponse
+     */
+    public function postUserChangeInfo(
+        Request $request,
+        EntityManagerInterface $em,
+        UserService $userService,
+        UserRepository $userRepo
+    )
+    {
+        if ($content = $request->getContent()) {
+            $data = json_decode($content, true);
+        }
+
+        $user_id = $userService->getCurrentUser()->getId();
+        $user = $userRepo->findOneBy(["id" => $user_id]);
+        $user->setEmail($data["email"])
+            ->setAddress($data["address"])
+            ->setCapacity($data["capacity"]);
+        $em->persist($user);
+        $em->flush();
+
+        return new JsonResponse(
+            ['status' => 200],
+            JsonResponse::HTTP_OK
+        );
     }
 }
