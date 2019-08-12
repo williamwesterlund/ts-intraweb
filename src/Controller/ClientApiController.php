@@ -9,13 +9,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use App\Entity\Client;
-use App\Repository\StudentReportRepository;
 use JMS\Serializer\SerializerInterface;
 use JMS\Serializer\SerializationContext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 
 class ClientApiController extends AbstractController
 {
@@ -70,25 +68,44 @@ class ClientApiController extends AbstractController
         $client->setParentName($data["parent_name"])
             ->setStudentName($data["student_name"])
             ->setTelephone($data["telephone"])
-            ->setEmail($data["email"])
             ->setAddress($data["address"])
             ->setLevel($data["level"])
             ->setSubjects($data["subjects"])
             ->setStudyPlan($data["study_plan"])
             ->setTime($data["time"]);
 
+        if (filter_var($data["email"], FILTER_VALIDATE_EMAIL)) {
+            $client->setEmail($data["email"]);
+        } else {
+            return new JsonResponse(
+                ['error' => "Invalid email, check your input.",
+                    'status' => 406],
+                JsonResponse::HTTP_NOT_ACCEPTABLE
+            );
+        }
+
         if($data["teacher"] == "") {
             $client->setTeacher(null);
         } else {
             $teacher = $userRepo->findOneBy(["name" => $data["teacher"]]);
-            $client->setTeacher($teacher);
+            if($teacher) {
+                $client->setTeacher($teacher);
+            } else {
+                return new JsonResponse(
+                    ['error' => "Couldn't find teacher, check your input.",
+                        'status' => 400],
+                    JsonResponse::HTTP_BAD_REQUEST
+                );
+            }
         }
 
         if($data["hidden_users"] != "") {
             $hiddenUsersArray = explode(", ", $data["hidden_users"]);
             foreach ($hiddenUsersArray as $hiddenUser) {
                 $user = $userRepo->findOneBy(["name" => $hiddenUser]);
-                $client->addHiddenUser($user);
+                if($user) {
+                    $client->addHiddenUser($user);
+                }
             }
         }
 
@@ -134,25 +151,45 @@ class ClientApiController extends AbstractController
         $client->setParentName($data["parent_name"])
             ->setStudentName($data["student_name"])
             ->setTelephone($data["telephone"])
-            ->setEmail($data["email"])
             ->setAddress($data["address"])
             ->setLevel($data["level"])
             ->setSubjects($data["subjects"])
             ->setStudyPlan($data["study_plan"])
             ->setTime($data["time"]);
 
+        if (filter_var($data["email"], FILTER_VALIDATE_EMAIL)) {
+            $client->setEmail($data["email"]);
+        } else {
+            return new JsonResponse(
+                ['error' => "Invalid email, check your input.",
+                    'status' => 406],
+                JsonResponse::HTTP_NOT_ACCEPTABLE
+            );
+        }
+
         if($data["teacher"] == "") {
             $client->setTeacher(null);
         } else {
             $teacher = $userRepo->findOneBy(["name" => $data["teacher"]]);
-            $client->setTeacher($teacher);
+            if($teacher) {
+                $client->setTeacher($teacher);
+            } else {
+                return new JsonResponse(
+                    ['error' => "Couldn't find teacher, check your input.",
+                    'status' => 400],
+                    JsonResponse::HTTP_BAD_REQUEST
+                );
+            }
+
         }
 
         if($data["hidden_users"] != "") {
             $hiddenUsersArray = explode(", ", $data["hidden_users"]);
             foreach ($hiddenUsersArray as $hiddenUser) {
                 $user = $userRepo->findOneBy(["name" => $hiddenUser]);
-                $client->addHiddenUser($user);
+                if($user) {
+                    $client->addHiddenUser($user);
+                }
             }
         }
 
@@ -199,8 +236,7 @@ class ClientApiController extends AbstractController
         ClientRepository $repository,
         SerializerInterface $serializer,
         UserService $userService,
-        UserRepository $userRepo,
-        LoggerInterface $logger
+        UserRepository $userRepo
     )
     {
         $user_id = $userService->getCurrentUser()->getId();
@@ -209,35 +245,13 @@ class ClientApiController extends AbstractController
 
         $clients = $repository->findAllWithoutTeacher();
 
-//        dump($clients);
-
         $filteredClients = array_udiff($clients, $userHiddenClients,
             function ($obj_a, $obj_b) {
                 return $obj_a->getId() - $obj_b->getId();
             }
         );
 
-        dump($filteredClients);
-
         return new JsonResponse($serializer->serialize($filteredClients, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
-    }
-
-    /**
-     * Lists all studentReports for a specific client.
-     * @Route("/api/clients/{id}/studentreports", name="get_client_student_report", methods={"GET"})
-     *
-     * @return JsonResponse
-     */
-    public function getClientStudentReports(
-        StudentReportRepository $studentReportRepo, 
-        SerializerInterface $serializer, 
-        ClientRepository $clientRepo,
-        $id)
-    {   
-        $client = $clientRepo->findOneBy(["id" => $id]);
-        $studentReports = $studentReportRepo->findBy(["client" => $client]);
-
-        return new JsonResponse($serializer->serialize($studentReports, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
     }
 
     /**
@@ -246,7 +260,6 @@ class ClientApiController extends AbstractController
      * @return JsonResponse
      */
     public function updateClientTeacher(
-        Request $request,
         ClientRepository $clientRepo,
         UserRepository $userRepo,
         EntityManagerInterface $em,

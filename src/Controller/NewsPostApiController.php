@@ -60,22 +60,38 @@ class NewsPostApiController extends AbstractController
             $data = json_decode($content, true);
         }
 
-        $newsPost = new NewsPost();
-        $newsPost->setTitle($data["title"])
-            ->setMessage($data["message"]);
+        if($data["title"] != "" && $data["message"] != "") {
+            $newsPost = new NewsPost();
+            $newsPost->setTitle($data["title"])
+                ->setMessage($data["message"]);
 
-        $user = $userRepo->findOneBy(["name" => $data["author"]]);
-        $newsPost->setAuthor($user);
+            $user = $userRepo->findOneBy(["name" => $data["author"]]);
+            if($user) {
+                $newsPost->setAuthor($user);
+            } else {
+                return new JsonResponse(
+                    ['error' => "Couldn't find author, check your input.",
+                    'status' => 406],
+                    JsonResponse::HTTP_NOT_ACCEPTABLE
+                );
+            }
 
-        $em->persist($newsPost);
-        $em->flush();
+            $em->persist($newsPost);
+            $em->flush();
 
-        return new JsonResponse($serializer->serialize($newsPost, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
+            return new JsonResponse($serializer->serialize($newsPost, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
+        } else {
+            return new JsonResponse(
+                ['error' => "Title and message missing, check your input.",
+                    'status' => 406],
+                JsonResponse::HTTP_NOT_ACCEPTABLE
+            );
+        }
     }
 
     /**
      * PUT: Updates newspost with {id}.
-     * @Route("/api/newsposts/{id}", name="put_newsposts", methods={"PUT"})
+     * @Route("/api/newsposts/{id}", name="update_newsposts", methods={"PUT"})
      * Request body : {
      *  title : [string]
      *  message : [string]
@@ -96,17 +112,33 @@ class NewsPostApiController extends AbstractController
             $data = json_decode($content, true);
         }
 
-        $newsPost = $newsPostRepo->findOneBy(["id" => $id]);
-        $newsPost->setTitle($data["title"])
-            ->setMessage($data["message"]);
+        if($data["title"] != "" && $data["message"] != "") {
+            $newsPost = $newsPostRepo->findOneBy(["id" => $id]);
+            $newsPost->setTitle($data["title"])
+                ->setMessage($data["message"]);
 
-        $user = $userRepo->findOneBy(["name" => $data["author"]]);
-        $newsPost->setAuthor($user);
+            $user = $userRepo->findOneBy(["name" => $data["author"]]);
+            if($user) {
+                $newsPost->setAuthor($user);
+            } else {
+                return new JsonResponse(
+                    ['error' => "Couldn't find author, check your input.",
+                        'status' => 406],
+                    JsonResponse::HTTP_NOT_ACCEPTABLE
+                );
+            }
 
-        $em->persist($newsPost);
-        $em->flush();
+            $em->persist($newsPost);
+            $em->flush();
 
-        return new JsonResponse($serializer->serialize($newsPost, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
+            return new JsonResponse($serializer->serialize($newsPost, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
+        } else {
+            return new JsonResponse(
+                ['error' => "Title and message missing, check your input.",
+                    'status' => 406],
+                JsonResponse::HTTP_NOT_ACCEPTABLE
+            );
+        }
     }
 
     /**
@@ -157,11 +189,11 @@ class NewsPostApiController extends AbstractController
      * @return JsonResponse
      */
     public function getNewsPost(
-        NewsPostRepository $repository, 
+        NewsPostRepository $repository,
         SerializerInterface $serializer,
         $id
         )
-    {   
+    {
         $newsPost = $repository->findOneBy(["id" => $id]);
         return new JsonResponse($serializer->serialize($newsPost, 'json', SerializationContext::create()->enableMaxDepthChecks()), 200, [], true);
     }

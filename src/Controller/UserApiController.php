@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Security;
 
 class UserApiController extends AbstractController
 {
@@ -61,28 +62,36 @@ class UserApiController extends AbstractController
         }
 
         $user = new User();
-        $user->setEmail($data["email"])
-            ->setName($data["name"])
+        $user->setName($data["name"])
             ->setAddress($data["address"])
             ->setCapacity($data["capacity"]);
+
+        if (filter_var($data["email"], FILTER_VALIDATE_EMAIL)) {
+            $user->setEmail($data["email"]);
+        } else {
+            return new JsonResponse(
+                ['error' => "Invalid email, check your input.",
+                    'status' => 406],
+                JsonResponse::HTTP_NOT_ACCEPTABLE
+            );
+        }
 
         $user->setPassword($passwordEncoder->encodePassword(
             $user,
             'topscholar'
         ));
 
-        if($data["roles"] == "" || $data["roles"] == "ROLE_USER") {
-//            $user->setRoles(["ROLE_USER"]);
-        } else {
-            $rolesArray = explode(", ", $data["roles"]);
-            $user->setRoles($rolesArray);
+        if($data["roles"] == "" || $data["roles"] == "ROLE_USER" || $data["roles"] == "ROLE_ADMIN") {
+            $user->setRoles([$data["roles"]]);
         }
 
         if(!$data["clients"] == "") {
             $clientArray = explode(", ", $data["clients"]);
             foreach ($clientArray as $client) {
                 $clientObj = $clientRepo->findOneBy(["student_name" => $client]);
-                $user->addClient($clientObj);
+                if($clientObj) {
+                    $user->addClient($clientObj);
+                }
             }
         }
 
@@ -120,18 +129,23 @@ class UserApiController extends AbstractController
 
         $user = $userRepo->findOneBy(["id" => $id]);
 
-        $user->setEmail($data["email"])
-            ->setName($data["name"])
+        $user->setName($data["name"])
             ->setAddress($data["address"])
             ->setCapacity($data["capacity"]);
 
-        if($data["roles"] == "" || $data["roles"] == "ROLE_USER") {
-            $user->setRoles(["ROLE_USER"]);
+        if (filter_var($data["email"], FILTER_VALIDATE_EMAIL)) {
+            $user->setEmail($data["email"]);
         } else {
-            $rolesArray = explode(", ", $data["roles"]);
-            $user->setRoles($rolesArray);
+            return new JsonResponse(
+                ['error' => "Invalid email, check your input.",
+                    'status' => 406],
+                JsonResponse::HTTP_NOT_ACCEPTABLE
+            );
         }
 
+        if($data["roles"] == "" || $data["roles"] == "ROLE_USER" || $data["roles"] == "ROLE_ADMIN") {
+            $user->setRoles([$data["roles"]]);
+        }
 
         if(!$data["clients"] == "") {
             $existingClients = [];
@@ -143,13 +157,17 @@ class UserApiController extends AbstractController
             foreach ($clientArray as $client) {
                 if (!in_array($client, $existingClients)) {
                     $clientObj = $clientRepo->findOneBy(["student_name" => $client]);
-                    $user->addClient($clientObj);
+                    if($clientObj) {
+                        $user->addClient($clientObj);
+                    }
                 }
             }
             foreach ($existingClients as $existingClient) {
                 if (!in_array($existingClient, $clientArray)) {
                     $clientObj = $clientRepo->findOneBy(["student_name" => $existingClient]);
-                    $user->removeClient($clientObj);
+                    if($clientObj) {
+                        $user->removeClient($clientObj);
+                    }
                 }
             }
         } else {
@@ -194,13 +212,12 @@ class UserApiController extends AbstractController
 
     /**
      * Get a user
-     * @Route("/api/user", name="get_user", methods={"GET"})
+     * @Route("/api/user/info", name="get_user", methods={"GET"})
      * @return JsonResponse
      */
     public function getUserInfo(
         UserService $userService,
-        UserRepository $userRepo,
-        SerializerInterface $serializer
+        UserRepository $userRepo
     )
     {
         $user_id = $userService->getCurrentUser()->getId();
@@ -245,44 +262,8 @@ class UserApiController extends AbstractController
     }
 
     /**
-     * Creates a new admin user
-     * @Route("/api/users/admin", name="post_user_admin", methods={"POST"})
-     * Request body : {
-     *  name : [string]
-     *  email : [string]
-     * }
-     * @return JsonResponse
-     */
-    public function postUserAdmin(
-        Request $request,
-        EntityManagerInterface $em
-        )
-    {   
-        if ($content = $request->getContent()) {
-            $data = json_decode($content, true);
-        }
-
-        $user = new User();
-        $user->setName($data["name"])
-            ->setPassword("temp_password")
-            ->setEmail($data["email"])
-            ->setIsTeacher(false)
-            ->setIsAdmin(true);
-        
-        $em->persist($user);
-        $em->flush();
-
-        // exit(\Doctrine\Common\Util\Debug::dump($data));
-
-        return new JsonResponse(
-            ['status' => 'ok'], 
-            JsonResponse::HTTP_CREATED
-        );
-    }
-
-    /**
-     * Creates a new admin user
-     * @Route("/api/users/hide_client/{id}", name="post_user_hide_client", methods={"POST"})
+     * Hides a client from a user
+     * @Route("/api/user/hide_client/{id}", name="post_user_hide_client", methods={"POST"})
      * Request body : {}
      *
      * @return JsonResponse
@@ -301,7 +282,8 @@ class UserApiController extends AbstractController
         $client = $clientRepo->findOneBy(["id" => $id]);
         if ($teacher->getHiddenClients()->contains($client)) {
             return new JsonResponse(
-                ['status' => 406],
+                ['error' => "Something went wrong.",
+                    'status' => 406],
                 JsonResponse::HTTP_NOT_ACCEPTABLE
             );
         }
@@ -318,7 +300,7 @@ class UserApiController extends AbstractController
 
     /**
      * Change user password
-     * @Route("/api/users/changepassword", name="post_user_changepassword", methods={"POST"})
+     * @Route("/api/user/changepassword", name="post_user_changepassword", methods={"POST"})
      * Request body : {
      *  oldPassword : [string]
      *  newPassword : [string]
@@ -331,7 +313,8 @@ class UserApiController extends AbstractController
         EntityManagerInterface $em,
         UserService $userService,
         UserRepository $userRepo,
-        UserPasswordEncoderInterface $passwordEncoder)
+        UserPasswordEncoderInterface $passwordEncoder
+    )
     {
         if ($content = $request->getContent()) {
             $data = json_decode($content, true);
@@ -352,7 +335,8 @@ class UserApiController extends AbstractController
             );
         } else {
             return new JsonResponse(
-                ['error' => 'Old password is incorrect.'],
+                ['error' => 'Old password is incorrect.',
+                    'status' => 400],
                 JsonResponse::HTTP_BAD_REQUEST
             );
         }
@@ -360,7 +344,7 @@ class UserApiController extends AbstractController
 
     /**
      * Change user info
-     * @Route("/api/users/info", name="post_user_changeinfo", methods={"POST"})
+     * @Route("/api/user/info", name="post_user_changeinfo", methods={"POST"})
      * Request body : {
      *  email : [string]
      *  address : [string]
@@ -382,8 +366,7 @@ class UserApiController extends AbstractController
 
         $user_id = $userService->getCurrentUser()->getId();
         $user = $userRepo->findOneBy(["id" => $user_id]);
-        $user->setEmail($data["email"])
-            ->setAddress($data["address"])
+        $user->setAddress($data["address"])
             ->setCapacity($data["capacity"]);
         $em->persist($user);
         $em->flush();
