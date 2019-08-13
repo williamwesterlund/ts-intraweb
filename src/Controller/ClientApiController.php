@@ -23,7 +23,7 @@ class ClientApiController extends AbstractController
 
     /**
      * GET: Returns all clients
-     * @Route("/api/clients", name="get_all_client", methods={"GET"})
+     * @Route("/api/admin/clients", name="get_all_client", methods={"GET"})
      * @return JsonResponse
      */
     public function getAllClients(
@@ -37,7 +37,7 @@ class ClientApiController extends AbstractController
 
     /**
      * POST: Creates new client.
-     * @Route("/api/clients", name="post_client", methods={"POST"})
+     * @Route("/api/admin/clients", name="post_client", methods={"POST"})
      * Request body : {
      *  parent_name : [string]
      *  student_name : [string]
@@ -117,7 +117,7 @@ class ClientApiController extends AbstractController
 
     /**
      * PUT: Update Client Data
-     * @Route("/api/clients/{id}", name="update_client", methods={"PUT"})
+     * @Route("/api/admin/clients/{id}", name="update_client", methods={"PUT"})
      * Request body : {
      *  parent_name : [string]
      *  student_name : [string]
@@ -201,7 +201,7 @@ class ClientApiController extends AbstractController
 
     /**
      * DELETE: delete client with {id}
-     * @Route("/api/clients/{id}", name="delete_client", methods={"DELETE"})
+     * @Route("/api/admin/clients/{id}", name="delete_client", methods={"DELETE"})
      *
      * @return JsonResponse
      */

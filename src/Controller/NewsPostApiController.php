@@ -27,7 +27,7 @@ class NewsPostApiController extends AbstractController
 
     /**
      * GET: Returns all newsPosts
-     * @Route("/api/newsposts", name="get_all_newsposts", methods={"GET"})
+     * @Route("/api/admin/newsposts", name="get_all_newsposts", methods={"GET"})
      * @return JsonResponse
      */
     public function getAllNewsPosts(
@@ -41,7 +41,7 @@ class NewsPostApiController extends AbstractController
 
     /**
      * POST: Creates new newspost.
-     * @Route("/api/newsposts", name="post_newsposts", methods={"POST"})
+     * @Route("/api/admin/newsposts", name="post_newsposts", methods={"POST"})
      * Request body : {
      *  title : [string]
      *  message : [string]
@@ -91,7 +91,7 @@ class NewsPostApiController extends AbstractController
 
     /**
      * PUT: Updates newspost with {id}.
-     * @Route("/api/newsposts/{id}", name="update_newsposts", methods={"PUT"})
+     * @Route("/api/admin/newsposts/{id}", name="update_newsposts", methods={"PUT"})
      * Request body : {
      *  title : [string]
      *  message : [string]
@@ -143,7 +143,7 @@ class NewsPostApiController extends AbstractController
 
     /**
      * DELETE: delete newspost with {id}
-     * @Route("/api/newsposts/{id}", name="delete_newspost", methods={"DELETE"})
+     * @Route("/api/admin/newsposts/{id}", name="delete_newspost", methods={"DELETE"})
      * @return JsonResponse
      */
     public function deleteNewsPost(

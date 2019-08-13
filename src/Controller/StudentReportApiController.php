@@ -23,7 +23,7 @@ class StudentReportApiController extends AbstractController
 
     /**
      * GET: Returns all student reports.
-     * @Route("/api/studentreport", name="get_all_studentreport", methods={"GET"})
+     * @Route("/api/admin/studentreport", name="get_all_studentreport", methods={"GET"})
      * @return JsonResponse
      */
     public function getAllStudentReport(
@@ -37,7 +37,7 @@ class StudentReportApiController extends AbstractController
 
     /**
      * PUT: Updates student report with {id}.
-     * @Route("/api/studentreport/{id}", name="updatestudentreport", methods={"PUT"})
+     * @Route("/api/admin/studentreport/{id}", name="updatestudentreport", methods={"PUT"})
      * Request body : {
      *  teacher : [string]
      *  client : [string]
@@ -133,7 +133,7 @@ class StudentReportApiController extends AbstractController
 
     /**
      * DELETE: delete student report with {id}
-     * @Route("/api/studentreport/{id}", name="delete_studentreport", methods={"DELETE"})
+     * @Route("/api/admin/studentreport/{id}", name="delete_studentreport", methods={"DELETE"})
      * @return JsonResponse
      */
     public function deleteStudentReport(

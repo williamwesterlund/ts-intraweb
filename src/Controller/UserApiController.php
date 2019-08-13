@@ -24,7 +24,7 @@ class UserApiController extends AbstractController
 
     /**
      * GET: Returns all users
-     * @Route("/api/user", name="get_all_user", methods={"GET"})
+     * @Route("/api/admin/user", name="get_all_user", methods={"GET"})
      * @return JsonResponse
      */
     public function getAllUsers(
@@ -38,7 +38,7 @@ class UserApiController extends AbstractController
 
     /**
      * POST: Creates new client.
-     * @Route("/api/user", name="post_user", methods={"POST"})
+     * @Route("/api/admin/user", name="post_user", methods={"POST"})
      * Request body : {
      *  name : [string]
      *  email : [string]
@@ -103,7 +103,7 @@ class UserApiController extends AbstractController
 
     /**
      * PUT: Creates new client.
-     * @Route("/api/user/{id}", name="update_user", methods={"PUT"})
+     * @Route("/api/admin/user/{id}", name="update_user", methods={"PUT"})
      * Request body : {
      *  name : [string]
      *  email : [string]
@@ -185,7 +185,7 @@ class UserApiController extends AbstractController
 
     /**
      * DELETE: delete user with {id}
-     * @Route("/api/user/{id}", name="delete_user", methods={"DELETE"})
+     * @Route("/api/admin/user/{id}", name="delete_user", methods={"DELETE"})
      *
      * @return JsonResponse
      */
