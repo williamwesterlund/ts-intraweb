@@ -33,11 +33,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccess, priority: -2 }
 
-    App\Listeners\PreflightIgnoreOnNewRelicListener:
-        class: App\Listeners\PreflightIgnoreOnNewRelicListener
-        tags:
-            - { name: kernel.event_listener, event: kernel.onKernelResponse }
-
     tenant_user_service:
         class: App\Services\UserService
         arguments: [ '@security.token_storage' ]
