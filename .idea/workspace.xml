@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fea5feb5-a713-46a4-8c56-3557d2ed8969" name="Default Changelist" comment="" />
+    <list default="true" id="fea5feb5-a713-46a4-8c56-3557d2ed8969" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,11 +18,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.env">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="30" column="29" selection-start-line="30" selection-start-column="29" selection-end-line="30" selection-end-column="29" />
+            <state relative-caret-position="660">
+              <caret line="39" column="44" selection-start-line="39" selection-start-column="44" selection-end-line="39" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -70,14 +72,23 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vendor/lexik/jwt-authentication-bundle/Encoder/LcobucciJWTEncoder.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="326">
-              <caret line="33" column="13" selection-start-line="33" selection-start-column="13" selection-end-line="33" selection-end-column="13" />
+            <state relative-caret-position="284">
+              <caret line="31" column="23" selection-start-line="31" selection-start-column="23" selection-end-line="31" selection-end-column="23" />
               <folding>
                 <element signature="e#64#141#0#PHP" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/lexik/jwt-authentication-bundle/Services/JWTManager.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="371">
+              <caret line="74" column="44" selection-start-line="74" selection-start-column="44" selection-end-line="74" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -145,13 +156,13 @@
         <option value="$PROJECT_DIR$/src/Controller/CheckTokenController.php" />
         <option value="$PROJECT_DIR$/config/packages/nelmio_cors.yaml" />
         <option value="$PROJECT_DIR$/public/index.php" />
-        <option value="$PROJECT_DIR$/.env" />
         <option value="$PROJECT_DIR$/src/DataFixtures/UserFixtures.php" />
         <option value="$PROJECT_DIR$/composer.json" />
         <option value="$PROJECT_DIR$/config/packages/prod/monolog.yaml" />
         <option value="$PROJECT_DIR$/public/.htaccess" />
         <option value="$PROJECT_DIR$/config/packages/lexik_jwt_authentication.yaml" />
         <option value="$PROJECT_DIR$/vendor/lexik/jwt-authentication-bundle/Encoder/LcobucciJWTEncoder.php" />
+        <option value="$PROJECT_DIR$/.env" />
       </list>
     </option>
   </component>
@@ -327,73 +338,8 @@
             <path>
               <item name="Intraweb" type="b2602c69:ProjectViewProjectNode" />
               <item name="Intraweb" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Intraweb" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Intraweb" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Intraweb" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Intraweb" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Controller" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Intraweb" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Intraweb" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="DataFixtures" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Intraweb" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Intraweb" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Entity" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Intraweb" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Intraweb" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Listeners" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Intraweb" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Intraweb" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Migrations" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Intraweb" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Intraweb" type="462c0819:PsiDirectoryNode" />
-              <item name="var" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Intraweb" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Intraweb" type="462c0819:PsiDirectoryNode" />
-              <item name="vendor" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Intraweb" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Intraweb" type="462c0819:PsiDirectoryNode" />
-              <item name="vendor" type="462c0819:PsiDirectoryNode" />
-              <item name="lexik" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Intraweb" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Intraweb" type="462c0819:PsiDirectoryNode" />
-              <item name="vendor" type="462c0819:PsiDirectoryNode" />
-              <item name="lexik" type="462c0819:PsiDirectoryNode" />
-              <item name="jwt-authentication-bundle" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Intraweb" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Intraweb" type="462c0819:PsiDirectoryNode" />
-              <item name="vendor" type="462c0819:PsiDirectoryNode" />
-              <item name="lexik" type="462c0819:PsiDirectoryNode" />
-              <item name="jwt-authentication-bundle" type="462c0819:PsiDirectoryNode" />
-              <item name="Encoder" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
+              <item name="jwt" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -436,12 +382,12 @@
       <workItem from="1562658919708" duration="714000" />
       <workItem from="1562659893145" duration="77591000" />
       <workItem from="1565692832106" duration="1278000" />
-      <workItem from="1565781709014" duration="5178000" />
+      <workItem from="1565781709014" duration="5494000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="94381000" />
+    <option name="totallyTimeSpent" value="94697000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="560" y="23" width="1120" height="1027" extended-state="0" />
@@ -472,13 +418,6 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/composer.lock">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="281">
-          <caret line="6541" column="53" selection-start-line="6541" selection-start-column="53" selection-end-line="6541" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Repository/StudentReportRepository.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
@@ -765,13 +704,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.env">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="30" column="29" selection-start-line="30" selection-start-column="29" selection-end-line="30" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/.htaccess">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -809,11 +741,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/vendor/lexik/jwt-authentication-bundle/Encoder/LcobucciJWTEncoder.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="326">
-          <caret line="33" column="13" selection-start-line="33" selection-start-column="13" selection-end-line="33" selection-end-column="13" />
+        <state relative-caret-position="284">
+          <caret line="31" column="23" selection-start-line="31" selection-start-column="23" selection-end-line="31" selection-end-column="23" />
           <folding>
             <element signature="e#64#141#0#PHP" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/lexik/jwt-authentication-bundle/Services/JWTManager.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="371">
+          <caret line="74" column="44" selection-start-line="74" selection-start-column="44" selection-end-line="74" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.env">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="39" column="44" selection-start-line="39" selection-start-column="44" selection-end-line="39" selection-end-column="44" />
         </state>
       </provider>
     </entry>
