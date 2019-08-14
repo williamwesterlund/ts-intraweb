@@ -73,8 +73,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/vendor/lexik/jwt-authentication-bundle/Encoder/LcobucciJWTEncoder.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="414">
-              <caret line="37" column="37" selection-start-line="37" selection-start-column="37" selection-end-line="37" selection-end-column="37" />
+            <state relative-caret-position="326">
+              <caret line="33" column="13" selection-start-line="33" selection-start-column="13" selection-end-line="33" selection-end-column="13" />
               <folding>
                 <element signature="e#64#141#0#PHP" expanded="true" />
               </folding>
@@ -436,12 +436,12 @@
       <workItem from="1562658919708" duration="714000" />
       <workItem from="1562659893145" duration="77591000" />
       <workItem from="1565692832106" duration="1278000" />
-      <workItem from="1565781709014" duration="5042000" />
+      <workItem from="1565781709014" duration="5178000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="94245000" />
+    <option name="totallyTimeSpent" value="94381000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="560" y="23" width="1120" height="1027" extended-state="0" />
@@ -809,8 +809,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/vendor/lexik/jwt-authentication-bundle/Encoder/LcobucciJWTEncoder.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="37" column="37" selection-start-line="37" selection-start-column="37" selection-end-line="37" selection-end-column="37" />
+        <state relative-caret-position="326">
+          <caret line="33" column="13" selection-start-line="33" selection-start-column="13" selection-end-line="33" selection-end-column="13" />
           <folding>
             <element signature="e#64#141#0#PHP" expanded="true" />
           </folding>
