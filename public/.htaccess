@@ -1,5 +1,9 @@
 SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 
+SetEnv JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
+SetEnv JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
+SetEnv JWT_PASSPHRASE=Blackwhitelambo1
+
 # Use the front controller as index file. It serves as a fallback solution when
 # every other rewrite/redirect fails (e.g. in an aliased environment without
 # mod_rewrite). Additionally, this reduces the matching process for the
