@@ -57,8 +57,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/.htaccess">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="734">
-              <caret line="67" column="11" lean-forward="true" selection-start-line="67" selection-start-column="11" selection-end-line="67" selection-end-column="11" />
+            <state relative-caret-position="633">
+              <caret line="59" column="46" selection-start-line="59" selection-start-column="46" selection-end-line="59" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -436,12 +436,12 @@
       <workItem from="1562658919708" duration="714000" />
       <workItem from="1562659893145" duration="77591000" />
       <workItem from="1565692832106" duration="1278000" />
-      <workItem from="1565781709014" duration="3434000" />
+      <workItem from="1565781709014" duration="3721000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="92637000" />
+    <option name="totallyTimeSpent" value="92924000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="560" y="23" width="1120" height="1027" extended-state="0" />
@@ -809,8 +809,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/.htaccess">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="734">
-          <caret line="67" column="11" lean-forward="true" selection-start-line="67" selection-start-column="11" selection-end-line="67" selection-end-column="11" />
+        <state relative-caret-position="633">
+          <caret line="59" column="46" selection-start-line="59" selection-start-column="46" selection-end-line="59" selection-end-column="46" />
         </state>
       </provider>
     </entry>
