@@ -1,2 +1,2 @@
 web: heroku-php-apache2 public/
-web: ADDR=$PORT ./mercure
+web: JWT_KEY='myJWTKey' ADDR=$PORT ./mercure
