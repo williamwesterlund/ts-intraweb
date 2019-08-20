@@ -14,18 +14,21 @@ use JMS\Serializer\SerializationContext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class ClientApiController extends AbstractController
 {
 
     /** GET: Certbot
-     * @Route("/.well-known/acme-challenge/bR_L5W70EOXxnbxACXT2eyYA05lJEMHtAkHkEzPIznw", name="get_certbot", methods={"GET"})
-     * @return JsonResponse
+     * @Route("/.well-known/acme-challenge/vlBCfK4Wfr-4AIZg5Rq0_tsfoQL0UVWpbqGSz8tJGvA", name="get_certbot", methods={"GET"})
+     * @return Response
      */
     public function getLetsEncrypt()
     {
-        $data = "bR_L5W70EOXxnbxACXT2eyYA05lJEMHtAkHkEzPIznw";
-        return new JsonResponse($data);
+        $data = "vlBCfK4Wfr-4AIZg5Rq0_tsfoQL0UVWpbqGSz8tJGvA.5nPnBVKjanQcn9m0OkeSOJpw-hICdgxchUZbd94njIo";
+        return new Response(
+            '<html><body>'.$data.'</body></html>'
+        );
     }
 
     /**
