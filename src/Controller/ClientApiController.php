@@ -19,7 +19,7 @@ class ClientApiController extends AbstractController
 {
 
     /** GET: Certbot
-     * @Route("/.well-known/acme-challenge/bR_L5W70EOXxnbxACXT2eyYA05lJEMHtAkHkEzPIznw", name="get_certbot", methods={"GET})
+     * @Route("/.well-known/acme-challenge/bR_L5W70EOXxnbxACXT2eyYA05lJEMHtAkHkEzPIznw", name="get_certbot", methods={"GET"})
      * @return JsonResponse
      */
     public function getLetsEncrypt()
