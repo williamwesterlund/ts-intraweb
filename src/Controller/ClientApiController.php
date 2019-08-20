@@ -19,17 +19,17 @@ use Symfony\Component\HttpFoundation\Response;
 class ClientApiController extends AbstractController
 {
 
-    /** GET: Certbot
-     * @Route("/.well-known/acme-challenge/vlBCfK4Wfr-4AIZg5Rq0_tsfoQL0UVWpbqGSz8tJGvA", name="get_certbot", methods={"GET"})
-     * @return Response
-     */
-    public function getLetsEncrypt()
-    {
-        $data = "vlBCfK4Wfr-4AIZg5Rq0_tsfoQL0UVWpbqGSz8tJGvA.5nPnBVKjanQcn9m0OkeSOJpw-hICdgxchUZbd94njIo";
-        return new Response(
-            '<html><body>'.$data.'</body></html>'
-        );
-    }
+//    /** GET: Certbot
+//     * @Route("/.well-known/acme-challenge/vlBCfK4Wfr-4AIZg5Rq0_tsfoQL0UVWpbqGSz8tJGvA", name="get_certbot", methods={"GET"})
+//     * @return Response
+//     */
+//    public function getLetsEncrypt()
+//    {
+//        $data = "vlBCfK4Wfr-4AIZg5Rq0_tsfoQL0UVWpbqGSz8tJGvA.5nPnBVKjanQcn9m0OkeSOJpw-hICdgxchUZbd94njIo";
+//        return new Response(
+//            '<html><body>'.$data.'</body></html>'
+//        );
+//    }
 
     /**
      * CRUD
