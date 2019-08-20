@@ -17,6 +17,17 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ClientApiController extends AbstractController
 {
+
+    /** GET: Certbot
+     * @Route("/.well-known/acme-challenge/bR_L5W70EOXxnbxACXT2eyYA05lJEMHtAkHkEzPIznw", name="get_certbot", methods={"GET})
+     * @return JsonResponse
+     */
+    public function getLetsEncrypt()
+    {
+        $data = "bR_L5W70EOXxnbxACXT2eyYA05lJEMHtAkHkEzPIznw";
+        return new JsonResponse($data);
+    }
+
     /**
      * CRUD
      */
