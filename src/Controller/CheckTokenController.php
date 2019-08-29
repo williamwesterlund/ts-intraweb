@@ -9,7 +9,7 @@ class CheckTokenController extends AbstractController {
 
     /**
      * Checks if a regular user is logged in
-     * @Route("/api/checkToken", name="get_checkToken", methods={"GET"})
+     * @Route("/api/checkToken/", name="get_checkToken", methods={"GET"})
      *
      * @return JsonResponse
      */
