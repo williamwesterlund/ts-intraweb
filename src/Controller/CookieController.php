@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,12 +16,14 @@ class CookieController extends AbstractController {
      */
     public function getLogout()
     {
-        $response = Response::create();
-        $response->headers->clearCookie('Bearer');
-        $response->setStatusCode(Response::HTTP_OK);
-
-        return $response;
+//        $response = Response::create();
+//        $response->headers->clearCookie('Bearer');
+//        $response->setStatusCode(Response::HTTP_OK);
+//
+//        return $response;
+        return new JsonResponse(
+            ['status' => 200],
+            JsonResponse::HTTP_OK
+        );
     }
-
-
 }
