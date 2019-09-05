@@ -299,15 +299,15 @@ class UserApiController extends AbstractController
     }
 
     /**
-     * Change user password
-     * @Route("/api/user/changepassword", name="post_user_changepassword", methods={"POST"})
-     * Request body : {
-     *  oldPassword : [string]
-     *  newPassword : [string]
-     * }
-     *
-     * @return JsonResponse
-     */
+ * Change user password
+ * @Route("/api/user/changepassword", name="post_user_changepassword", methods={"POST"})
+ * Request body : {
+ *  oldPassword : [string]
+ *  newPassword : [string]
+ * }
+ *
+ * @return JsonResponse
+ */
     public function postUserChangePassword(
         Request $request,
         EntityManagerInterface $em,
@@ -341,6 +341,32 @@ class UserApiController extends AbstractController
             );
         }
     }
+
+    /**
+     * Reset user password
+     * @Route("/api/admin/user/{id}/resetpassword", name="get_user_resetpassword", methods={"GET"})
+     *
+     * @return JsonResponse
+     */
+    public function getResetUserPassword(
+        EntityManagerInterface $em,
+        UserRepository $userRepo,
+        UserPasswordEncoderInterface $passwordEncoder,
+        $id
+    )
+    {
+        $user = $userRepo->findOneBy(["id" => $id]);
+
+        $newPasswordEncoded = $passwordEncoder->encodePassword($user, "topscholar");
+        $user->setPassword($newPasswordEncoded);
+        $em->persist($user);
+        $em->flush();
+        return new JsonResponse(
+            ['status' => 200],
+            JsonResponse::HTTP_OK
+        );
+    }
+
 
     /**
      * Change user info
