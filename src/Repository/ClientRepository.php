@@ -22,9 +22,10 @@ class ClientRepository extends ServiceEntityRepository
     /**
     * @return Client[] Returns an array of Client objects
     */
-    public function findAllWithoutTeacher()
+    public function findAllWithoutTeacherExcludeTelephoneEmail()
     {
         return $this->createQueryBuilder('c')
+            ->select('c.id, c.parent_name, c.student_name, c.address, c.level, c.subjects, c.study_plan, c.time')
             ->andWhere('c.teacher IS NULL')
             ->getQuery()
             ->getResult();
