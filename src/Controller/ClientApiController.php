@@ -257,11 +257,16 @@ class ClientApiController extends AbstractController
         $user = $userRepo->findOneBy(["id" => $user_id]);
         $userHiddenClients = $user->getHiddenClients()->toArray();
 
+        $userHiddenClientsIds = [];
+        foreach ($userHiddenClients as $client) {
+            array_push($userHiddenClientsIds, ["id" => $client->getId()]);
+        }
+
         $clients = $repository->findAllWithoutTeacherExcludeTelephoneEmail();
 
-        $filteredClients = array_udiff($clients, $userHiddenClients,
+        $filteredClients = array_udiff($clients, $userHiddenClientsIds,
             function ($obj_a, $obj_b) {
-                return $obj_a->getId() - $obj_b->getId();
+                return $obj_a["id"] - $obj_b["id"];
             }
         );
 
