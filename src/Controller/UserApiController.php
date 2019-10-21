@@ -383,15 +383,31 @@ class UserApiController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         UserService $userService,
-        UserRepository $userRepo
+        UserRepository $userRepo,
+        \Swift_Mailer $mailer
     )
     {
         if ($content = $request->getContent()) {
             $data = json_decode($content, true);
         }
 
+
         $user_id = $userService->getCurrentUser()->getId();
         $user = $userRepo->findOneBy(["id" => $user_id]);
+
+        if($user->getCapacity() != $data["capacity"]) {
+            $message = (new \Swift_Message($user->getName() . ' har ändrat sin önskade kapacitet'))
+                ->setFrom('info@topscholar.se')
+                ->setTo('info@topscholar.se')
+                ->setBody(
+                    'Logga in för att se: https://www.intra.topscholar.se/home/admin',
+                    'text/plain'
+                );
+
+            $mailer->send($message);
+        }
+
+
         $user->setAddress($data["address"])
             ->setCapacity($data["capacity"]);
         $em->persist($user);

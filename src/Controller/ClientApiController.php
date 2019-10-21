@@ -284,6 +284,7 @@ class ClientApiController extends AbstractController
         EntityManagerInterface $em,
         Publisher $publisher,
         UserService $userService,
+        \Swift_Mailer $mailer,
         $id
         )
     {
@@ -304,6 +305,16 @@ class ClientApiController extends AbstractController
 
         // The Publisher service is an invokable object
         $publisher($update);
+
+        $message = (new \Swift_Message($teacher->getName() . ' har tagit ' . $client->getStudentName() . ' som elev'))
+            ->setFrom('info@topscholar.se')
+            ->setTo('info@topscholar.se')
+            ->setBody(
+                $teacher->getName() . ' har tagit ' . $client->getStudentName() . ' som elev',
+                'text/plain'
+            );
+
+        $mailer->send($message);
 
         return new JsonResponse(
             ['status' => 200],

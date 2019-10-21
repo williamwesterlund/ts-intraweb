@@ -176,7 +176,8 @@ class StudentReportApiController extends AbstractController
         ClientRepository $clientRepo,
         UserRepository $userRepo,
         EntityManagerInterface $em,
-        UserService $userService
+        UserService $userService,
+        \Swift_Mailer $mailer
         )
     {   
         if ($content = $request->getContent()) {
@@ -201,6 +202,16 @@ class StudentReportApiController extends AbstractController
 
             $em->persist($studentReport);
             $em->flush();
+
+            $message = (new \Swift_Message($teacher->getName() . ' har skickat in en tillfällesrapport för ' . $client->getStudentName()))
+                ->setFrom('info@topscholar.se')
+                ->setTo('info@topscholar.se')
+                ->setBody(
+                    'Logga in för att se: https://www.intra.topscholar.se/home/admin',
+                    'text/plain'
+                );
+
+            $mailer->send($message);
 
             return new JsonResponse(
                 ['status' => 200],
